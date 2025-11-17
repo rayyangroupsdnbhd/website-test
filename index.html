@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rayyan Aisy Production</title>
+
+  <!-- Fonts & preconnect (kept from previous site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Favicons & manifest (kept) -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/favicon-180.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+      color: #f5f5f5;
+      background: #05050a;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* =======================
+       VIDEO BACKGROUND 3 LAYERS
+       ======================= */
+
+    .video-background {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      background: #000000; /* bottom black layer */
+    }
+
+    body.hide-video .video-background {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .video-fallback {
+      position: absolute;
+      inset: 0;
+      background: #000000;
+    }
+
+    #bgVideo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* middle video layer */
+    }
+
+    #bgLogo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* keep aspect ratio, no crop/stretch */
+      pointer-events: none;
+    }
+
+    .video-overlay {
+      position: fixed;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: -1;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.65);
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+
+    /* =======================
+       HEADER & NAV
+       ======================= */
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      padding: 0.8rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.85),
+        rgba(0, 0, 0, 0.35),
+        transparent
+      );
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    nav a {
+      position: relative;
+      padding-bottom: 0.2rem;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: #f5f5f5;
+      transition: width 0.2s ease;
+    }
+
+    nav a:hover::after,
+    nav a.active::after {
+      width: 100%;
+    }
+
+    /* Burger */
+
+    .burger {
+      display: none;
+      width: 26px;
+      height: 20px;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .burger span {
+      display: block;
+      height: 3px;
+      border-radius: 999px;
+      background: #ffffff;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .burger.open span:nth-child(1) {
+      transform: translateY(8.5px) rotate(45deg);
+    }
+
+    .burger.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .burger.open span:nth-child(3) {
+      transform: translateY(-8.5px) rotate(-45deg);
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.96);
+      backdrop-filter: blur(12px);
+      z-index: 9;
+      padding: 0.75rem 1.25rem 1.2rem;
+    }
+
+    .mobile-nav a {
+      display: block;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 0.95rem;
+    }
+
+    .mobile-nav a:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-nav.show {
+      display: block;
+    }
+
+    /* =======================
+       LAYOUT
+       ======================= */
+
+    main {
+      position: relative;
+      z-index: 1;
+      padding-top: 72px;
+    }
+
+    section {
+      min-height: 100vh;
+      padding: 3.5rem 8vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.06), transparent 55%);
+    }
+
+    section:nth-of-type(even) {
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.02), transparent 60%);
+    }
+
+    /* remove background for Home, Our Works, Showreel so 3-layer bg shows */
+    #home,
+    #our-works,
+    #showreel {
+      background: transparent;
+    }
+
+    section h1,
+    section h2 {
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    section p {
+      max-width: 600px;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      color: #dcdcdc;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #32d7ff;
+      box-shadow: 0 0 8px #32d7ff;
+    }
+
+    /* Blur the background more on Our Works & Showreel */
+
+    body.blur-video .video-background {
+      filter: blur(6px);
+      transform: scale(1.04);
+    }
+
+    /* =======================
+       GALLERY
+       ======================= */
+
+    .gallery-wrapper {
+      margin-top: 2rem;
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(3, 3, 10, 0.9);
+    }
+
+    .gallery-track {
+      display: flex;
+      transition: transform 0.4s ease-in-out;
+      will-change: transform;
+      touch-action: pan-y;
+    }
+
+    .gallery-item {
+      position: relative;
+      flex: 0 0 auto;
+      overflow: hidden;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+    }
+
+    .gallery-controls {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      pointer-events: none;
+      padding: 0 0.4rem;
+    }
+
+    .gallery-btn {
+      pointer-events: auto;
+      border: none;
+      border-radius: 999px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* Contact socials */
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .socials a {
+      padding: 0.25rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 215, 0, 0.5);
+      color: #ffd26f;
+      font-size: 0.82rem;
+    }
+
+    .map-embed {
+      margin-top: 1.5rem;
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .map-embed iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    footer {
+      padding: 1.5rem 8vw 2rem;
+      font-size: 0.8rem;
+      text-align: center;
+      color: #8a8a8a;
+      background: #05050a;
+    }
+
+    /* =======================
+       RESPONSIVE
+       ======================= */
+
+    @media (max-width: 768px) {
+      header {
+        padding-inline: 1rem;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .burger {
+        display: flex;
+      }
+
+      section {
+        padding: 3.5rem 1.5rem;
+        min-height: 90vh;
+      }
+
+      .video-overlay {
+        font-size: 0.75rem;
+        bottom: 8%;
+      }
+
+      #bgLogo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .socials {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .mobile-nav {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="show-video">
+
+  <!-- 3-LAYER VIDEO BACKGROUND -->
+  <div class="video-background">
+    <div class="video-fallback"></div>
+    <video id="bgVideo" autoplay muted playsinline></video>
+    <img
+      id="bgLogo"
+      src="./assets/Rayyan Aisy Production Logo_00000.png"
+      alt="Rayyan Aisy Production"
+    />
+  </div>
+
+  <div class="video-overlay" id="videoLabel">AFTER EFFECTS · MOTION & DESIGN</div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-text">RAYYAN AISY PRODUCTION</div>
+    <nav id="desktopNav">
+      <a href="#home" class="nav-link active">Home</a>
+      <a href="#our-works" class="nav-link">Our Works</a>
+      <a href="#showreel" class="nav-link">Showreel</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+
+    <div class="burger" id="burgerBtn" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="#home" class="nav-link">Home</a>
+    <a href="#our-works" class="nav-link">Our Works</a>
+    <a href="#showreel" class="nav-link">Showreel</a>
+    <a href="#gallery" class="nav-link">Gallery</a>
+    <a href="#services" class="nav-link">Services</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </nav>
+
+  <!-- CONTENT -->
+  <main>
+    <!-- HOME -->
+    <section id="home">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Creative Production Studio</span>
+      </div>
+      <h1>Home</h1>
+      <p>
+        We craft cinematic visuals, powerful motion graphics and immersive sound
+        design for brands, events and experiences.
+      </p>
+    </section>
+
+    <!-- OUR WORKS -->
+    <section id="our-works">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Portfolio</span>
+      </div>
+      <h2>Our Works</h2>
+      <p>
+        From drone shots to 3D visuals and high-impact edits, our work is built
+        to look premium on any screen.
+      </p>
+    </section>
+
+    <!-- SHOWREEL -->
+    <section id="showreel">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Showreel</span>
+      </div>
+      <h2>Showreel</h2>
+      <p>
+        A fast-cut showreel featuring After Effects, compositing, video editing,
+        colour and sound work that represents what we can do for your brand.
+      </p>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Gallery</span>
+      </div>
+      <h2>Gallery</h2>
+      <p>
+        Stills from our shoots, behind the scenes moments and keyframes from
+        our edits. Auto-scrolling, but you can swipe or click to explore.
+      </p>
+
+      <div class="gallery-wrapper" id="galleryWrapper">
+        <div class="gallery-track" id="galleryTrack">
+          <!-- Replace src with your real image paths -->
+          <div class="gallery-item">
+            <img src="./assets/stage-hero.webp" alt="Gallery 1" />
+            <div class="gallery-caption">Stage & lighting</div>
+          </div>
+          <div class="gallery-item">
+            <img src="./assets/stage-hero.png" alt="Gallery 2" />
+            <div class="gallery-caption">Event production</div>
+          </div>
+          <div class="gallery-item">
+            <img src="./assets/stage-hero.avif" alt="Gallery 3" />
+            <div class="gallery-caption">LED & visuals</div>
+          </div>
+          <div class="gallery-item">
+            <img src="./assets/stage-hero.png" alt="Gallery 4" />
+            <div class="gallery-caption">Corporate launch</div>
+          </div>
+          <div class="gallery-item">
+            <img src="./assets/stage-hero.webp" alt="Gallery 5" />
+            <div class="gallery-caption">Awards & gala</div>
+          </div>
+        </div>
+
+        <div class="gallery-controls">
+          <button class="gallery-btn" id="galleryPrev" aria-label="Previous">
+            ‹
+          </button>
+          <button class="gallery-btn" id="galleryNext" aria-label="Next">
+            ›
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Services</span>
+      </div>
+      <h2>Services</h2>
+      <p>
+        After Effects motion design, 3D design, video editing, colour grading,
+        sound design, event coverage and more – packaged to fit your campaign
+        or event.
+      </p>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Contact</span>
+      </div>
+      <h2>Contact</h2>
+      <p style="margin-top:12px;line-height:1.7">
+        WhatsApp:
+        <a href="https://wa.me/60164205563" style="color:#ffd26f;">+6016-420-5563</a><br>
+        Email:
+        <a href="mailto:rayyangroupsdnbhd@gmail.com" style="color:#ffd26f;">rayyangroupsdnbhd@gmail.com</a><br>
+        Address:
+        S-50A-1-13, (The Hub) Pearl Avenue, Jalan Pasir Emas, Sungai Chua,
+        43000 Kajang, Selangor Darul Ehsan.
+      </p>
+
+      <div class="socials">
+        <a href="https://www.facebook.com/p/Rayyan-Aisy-Production-61577325873569/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.instagram.com/rayyanaisyproduction/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.tiktok.com/@rayyan_aisy_production" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://www.youtube.com/@RayyanAisyProduction" target="_blank" rel="noopener">YouTube</a>
+      </div>
+
+      <div class="map-embed">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3983.7738263184184!2d101.78655797592379!3d2.9933031972196636!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cdd99a9db64627%3A0x6f3d1063f4042afe!2sPearl%20Avenue%2C%20Sungai%20Chua!5e0!3m2!1sen!2smy!4v1731259200000!5m2!1sen!2smy"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen=""></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer>RAYYAN AISY PRODUCTION SDN. BHD.</footer>
+
+  <script>
+    // ============================
+    // VIDEO BACKGROUND LOGIC
+    // ============================
+
+    const videoElement = document.getElementById("bgVideo");
+    const videoLabel = document.getElementById("videoLabel");
+
+    const videos = [
+      {
+        src: "./videos/drone masjid.mp4",
+        label: "DRONE CINEMATIC · AERIAL VISUALS",
+      },
+      {
+        src: "./videos/3d.mp4",
+        label: "3D DESIGN · VISUAL PREVIEW",
+      },
+      {
+        src: "./videos/sound .mp4",
+        label: "SOUND DESIGN · AUDIO EXPERIENCE",
+      },
+      {
+        src: "./videos/video editing.mp4",
+        label: "VIDEO EDITING · STORY & RHYTHM",
+      },
+      {
+        src: "./videos/after effect.mp4",
+        label: "AFTER EFFECTS · MOTION & DESIGN",
+      },
+    ];
+
+    let currentVideoIndex = 0;
+
+    function loadVideo(index) {
+      const item = videos[index];
+      if (!item) return;
+      videoElement.src = item.src;
+      videoElement.muted = true;
+      videoElement.play().catch(() => {});
+      videoLabel.textContent = item.label;
+    }
+
+    loadVideo(currentVideoIndex);
+
+    setInterval(() => {
+      currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+      loadVideo(currentVideoIndex);
+    }, 4000);
+
+    // ============================
+    // NAVIGATION (desktop + mobile)
+    // ============================
+
+    const burgerBtn = document.getElementById("burgerBtn");
+    const mobileNav = document.getElementById("mobileNav");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    burgerBtn.addEventListener("click", () => {
+      burgerBtn.classList.toggle("open");
+      mobileNav.classList.toggle("show");
+    });
+
+    function closeMobileNav() {
+      burgerBtn.classList.remove("open");
+      mobileNav.classList.remove("show");
+    }
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        closeMobileNav();
+      });
+    });
+
+    const sections = document.querySelectorAll("main section");
+    const allNavLinks = document.querySelectorAll(".nav-link");
+
+    function updateSectionState() {
+      let current = "home";
+      let top = window.scrollY;
+
+      sections.forEach((sec) => {
+        const offset = sec.offsetTop - 140;
+        const height = sec.offsetHeight;
+        if (top >= offset && top < offset + height) {
+          current = sec.id;
+        }
+      });
+
+      allNavLinks.forEach((link) => {
+        link.classList.toggle(
+          "active",
+          link.getAttribute("href") === "#" + current
+        );
+      });
+
+      const body = document.body;
+
+      if (["home", "our-works", "showreel"].includes(current)) {
+        body.classList.remove("hide-video");
+      } else {
+        body.classList.add("hide-video");
+      }
+
+      if (["our-works", "showreel"].includes(current)) {
+        body.classList.add("blur-video");
+      } else {
+        body.classList.remove("blur-video");
+      }
+    }
+
+    window.addEventListener("scroll", updateSectionState);
+    window.addEventListener("load", updateSectionState);
+
+    // ============================
+    // GALLERY CAROUSEL
+    // ============================
+
+    const galleryWrapper = document.getElementById("galleryWrapper");
+    const galleryTrack = document.getElementById("galleryTrack");
+    const galleryItems = Array.from(
+      document.querySelectorAll(".gallery-item")
+    );
+    const prevBtn = document.getElementById("galleryPrev");
+    const nextBtn = document.getElementById("galleryNext");
+
+    let galleryIndex = 0;
+    let itemsPerView = 3;
+    let autoSlideTimer = null;
+
+    function updateItemsPerView() {
+      if (window.innerWidth <= 768) {
+        itemsPerView = 1;
+      } else {
+        itemsPerView = 3;
+      }
+
+      const itemWidthPercent = 100 / itemsPerView;
+      galleryItems.forEach((item) => {
+        item.style.width = itemWidthPercent + "%";
+      });
+
+      moveGalleryTo(galleryIndex, false);
+    }
+
+    function moveGalleryTo(index, smooth = true) {
+      const maxIndex = Math.max(
+        0,
+        galleryItems.length - itemsPerView
+      );
+      galleryIndex = Math.min(Math.max(0, index), maxIndex);
+
+      if (!smooth) {
+        galleryTrack.style.transition = "none";
+      } else {
+        galleryTrack.style.transition = "transform 0.4s ease-in-out";
+      }
+
+      const itemWidthPercent = 100 / itemsPerView;
+      const translateX = -(galleryIndex * itemWidthPercent);
+      galleryTrack.style.transform = `translateX(${translateX}%)`;
+
+      if (!smooth) {
+        void galleryTrack.offsetWidth;
+        galleryTrack.style.transition = "transform 0.4s ease-in-out";
+      }
+    }
+
+    function nextSlide() {
+      moveGalleryTo(galleryIndex + 1);
+    }
+
+    function prevSlide() {
+      moveGalleryTo(galleryIndex - 1);
+    }
+
+    prevBtn.addEventListener("click", () => {
+      prevSlide();
+      resetAutoSlide();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      nextSlide();
+      resetAutoSlide();
+    });
+
+    function startAutoSlide() {
+      autoSlideTimer = setInterval(() => {
+        const maxIndex = Math.max(
+          0,
+          galleryItems.length - itemsPerView
+        );
+        if (galleryIndex >= maxIndex) {
+          moveGalleryTo(0);
+        } else {
+          moveGalleryTo(galleryIndex + 1);
+        }
+      }, 4000);
+    }
+
+    function resetAutoSlide() {
+      clearInterval(autoSlideTimer);
+      startAutoSlide();
+    }
+
+    let startX = 0;
+    let isDragging = false;
+
+    function handleStart(e) {
+      isDragging = true;
+      startX = e.touches ? e.touches[0].clientX : e.clientX;
+    }
+
+    function handleEnd(e) {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const endX = e.changedTouches
+        ? e.changedTouches[0].clientX
+        : e.clientX;
+      const diff = endX - startX;
+
+      if (Math.abs(diff) > 50) {
+        if (diff < 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+        resetAutoSlide();
+      }
+    }
+
+    galleryWrapper.addEventListener("mousedown", handleStart);
+    galleryWrapper.addEventListener("mouseup", handleEnd);
+    galleryWrapper.addEventListener("mouseleave", () => {
+      isDragging = false;
+    });
+
+    galleryWrapper.addEventListener("touchstart", handleStart, {
+      passive: true,
+    });
+    galleryWrapper.addEventListener("touchend", handleEnd);
+
+    window.addEventListener("resize", updateItemsPerView);
+
+    updateItemsPerView();
+    startAutoSlide();
+  </script>
+</body>
+</html>
