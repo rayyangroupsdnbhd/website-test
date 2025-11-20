@@ -1,0 +1,24 @@
+{
+  "images": [
+    {
+      "name": "1.jpg",
+      "title": "Gallery 1"
+    },
+    {
+      "name": "2.jpg",
+      "title": "Gallery 2"
+    },
+    {
+      "name": "3.jpg",
+      "title": "Gallery 3"
+    },
+    {
+      "name": "4.jpg",
+      "title": "Gallery 4"
+    },
+    {
+      "name": "5.jpg",
+      "title": "Gallery 5"
+    }
+  ]
+}
